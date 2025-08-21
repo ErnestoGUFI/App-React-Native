@@ -1,14 +1,42 @@
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Alert, Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import TodoHeader from './components/TodoHeader';
+import TodoInput from './components/TodoInput';
+import TodoList from './components/TodoList';
 
 export default function App() {
+  const [tasks, setTasks] = useState([]);
+
+  const addTask = (text) => {
+    setTasks((prev) => [
+      { id: Date.now().toString(), text, completed: false },
+      ...prev,
+    ]);
+  };
+
+  const toggleTask = (id) => {
+    setTasks((prev) => prev.map((t) => (
+      t.id === id ? { ...t, completed: !t.completed } : t
+    )));
+  };
+
+  const deleteTask = (id) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
   return (
-   <View style={styles.container}>
-      <Text style={styles.title}>app react</Text>
-      <Button
-        title="boton"
-        onPress={() => Alert.alert('¡Hola! Este es tu primer botón')}
-      />
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      <View style={styles.headerArea}>
+        <TodoHeader />
+      </View>
+      <View style={styles.inputArea}>
+        <TodoInput onSubmit={addTask} />
+      </View>
+      <View style={styles.listArea}>
+        <TodoList data={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+      </View>
     </View>
   );
 }
@@ -16,8 +44,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#f1f5f9',
+    paddingTop: 56,
+    paddingHorizontal: 16,
+  },
+  headerArea: {
+    marginBottom: 12,
+  },
+  inputArea: {
+    marginBottom: 8,
+  },
+  listArea: {
+    flex: 1,
   },
 });
